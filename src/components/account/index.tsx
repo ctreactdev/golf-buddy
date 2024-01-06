@@ -1,148 +1,119 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
 import { StyleSheet, View, Alert, Text } from "react-native";
-import { Button, Input } from "react-native-elements";
 import { Session } from "@supabase/supabase-js";
-import { FlashList } from "@shopify/flash-list";
-
-export default function Account({ session }: { session: Session }) {
+import { Button } from "../../components";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../../navigation/RootStackParamList";
+interface IAccount {
+  session: Session;
+  // navigation: StackNavigationProp<RootStackParamList, "Home">;
+}
+interface IUser {
+  firstName: string;
+  lastName: string;
+  hpc: string;
+  age: string;
+  gender: string;
+}
+const Account: React.FC<IAccount> = ({ session }) => {
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("");
-  const [website, setWebsite] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [users, setUsers] = useState<{ username: string }[]>([]);
+  const [user, setUser] = useState<IUser[]>([]);
 
   useEffect(() => {
-    if (session) getProfile();
-    if (session) getAllUsers();
+    if (session) getUser();
   }, [session]);
 
-  async function getAllUsers() {
-    const { data, error } = await supabase.from("profiles").select("username");
-    if (error) {
-      console.log(error?.message);
-    }
-    setUsers(data ?? []);
-  }
-
-  async function getProfile() {
+  async function getUser() {
     try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const { data, error, status } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url`)
-        .eq("id", session?.user.id)
-        .single();
-      if (error && status !== 406) {
-        throw error;
+        .select("first_name, last_name, hpc, age, gender");
+
+      if (error) {
+        console.error(error.message);
+        return;
       }
 
       if (data) {
-        setUsername(data.username);
-        setWebsite(data.website);
-        setAvatarUrl(data.avatar_url);
+        const transformedUsers: IUser[] = data.map(
+          (user: {
+            first_name: string;
+            last_name: string;
+            hpc: string;
+            age: string;
+            gender: string;
+          }) => ({
+            firstName: user.first_name,
+            lastName: user.last_name,
+            hpc: user.hpc,
+            age: user.age,
+            gender: user.gender,
+          })
+        );
+
+        setUser(transformedUsers);
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
+    } catch (error: any) {
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
   }
+  // async function signOut() {
+  //   supabase.auth.signOut();
+  // }
 
-  async function updateProfile({
-    username,
-    website,
-    avatar_url,
-  }: {
-    username: string;
-    website: string;
-    avatar_url: string;
-  }) {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
+  // async function getProfile() {
+  //   try {
+  //     setLoading(true);
+  //     if (!session?.user) throw new Error("No user on the session!");
 
-      const updates = {
-        id: session?.user.id,
-        username,
-        website,
-        avatar_url,
-        updated_at: new Date(),
-      };
+  //     const { data, error, status } = await supabase
+  //       .from("profiles")
+  //       .select(`first_name, last_name, hpc, age, gender`)
+  //       .eq("id", session?.user.id)
+  //       .single();
+  //     if (error && status !== 406) {
+  //       throw error;
+  //     }
 
-      const { error } = await supabase.from("profiles").upsert(updates);
-
-      if (error) {
-        throw error;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
+  //     if (data) {
+  //       setUser(data.first_name);
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       Alert.alert(error.message);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input label="Email" value={session?.user?.email} disabled />
+      <View>
+        {user.map((item) => (
+          <View style={styles.profile}>
+            <Text>{item.firstName}</Text>
+            <Text>{item.lastName}</Text>
+            <Text>{item.hpc}</Text>
+            <Text>{item.age}</Text>
+            <Text>{item.gender}</Text>
+          </View>
+        ))}
       </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Username"
-          value={username || ""}
-          onChangeText={(text) => setUsername(text)}
-        />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Website"
-          value={website || ""}
-          onChangeText={(text) => setWebsite(text)}
-        />
-      </View>
-
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title={loading ? "Loading ..." : "Update"}
-          onPress={() =>
-            updateProfile({ username, website, avatar_url: avatarUrl })
-          }
-          disabled={loading}
-        />
-      </View>
-
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
-      <View style={[styles.verticallySpaced, { height: 200 }]}>
-        <FlashList
-          data={users}
-          renderItem={({ item }) => <Text>{item.username}</Text>}
-          estimatedItemSize={200}
-        />
-      </View>
+      <Button onPress={() => supabase.auth.signOut()}>Sign out</Button>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 40,
     padding: 12,
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: "stretch",
-  },
-  mt20: {
-    marginTop: 20,
-  },
+  profile: {},
 });
+
+export default Account;

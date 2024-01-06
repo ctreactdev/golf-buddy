@@ -1,5 +1,7 @@
 import TabIcon from "./tabIcon";
-import Auth from "./auth";
 import Account from "./account";
+import Button from "./button";
+import Wrapper from "./wrapper";
+import CustomInput from "./input";
 
-export { TabIcon, Auth, Account };
+export { TabIcon, Account, Button, Wrapper, CustomInput };

@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Home, Login } from "../src/screens";
+import { Home } from "../src/screens";
 import { TabIcon } from "../src/components";
 
 const Tab = createBottomTabNavigator();

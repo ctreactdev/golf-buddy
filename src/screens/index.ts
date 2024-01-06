@@ -1,4 +1,7 @@
 import Home from "./Home";
-import Login from "./Login";
+import Profile from "./Profile";
+import SignIn from "./Signin";
+import SignUp from "./Signup";
+import Fillout from "./Fillout";
 
-export { Home, Login };
+export { Home, Profile, SignIn, SignUp, Fillout };
