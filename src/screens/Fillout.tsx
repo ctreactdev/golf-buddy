@@ -13,7 +13,7 @@ type FilloutScreenRouteProp = RouteProp<RootStackParamList, "Fillout">;
 
 interface IFillout {
   route: FilloutScreenRouteProp;
-  navigation: StackNavigationProp<RootStackParamList, "Profile">;
+  navigation: StackNavigationProp<RootStackParamList, "Fillout">;
 }
 
 const Fillout: React.FC<IFillout> = ({ route, navigation }) => {

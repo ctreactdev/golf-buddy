@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/RootStackParamList";
 import { Button, CustomInput, Wrapper } from "../components";
 interface ISignUp {
-  navigation: StackNavigationProp<RootStackParamList, "Fillout">;
+  navigation: StackNavigationProp<RootStackParamList, "Signup">;
 }
 const SignUp: React.FC<ISignUp> = ({ navigation }) => {
   const [email, setEmail] = useState("");

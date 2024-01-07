@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { Button } from "../components";
 import "../../styles.css";
 interface IHome {
-  navigation: StackNavigationProp<RootStackParamList, "">;
+  navigation: StackNavigationProp<RootStackParamList, "Home">;
 }
 
 const Home: React.FC<IHome> = ({ navigation }) => {

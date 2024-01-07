@@ -7,7 +7,7 @@ import { Button, CustomInput, Wrapper } from "../components";
 import { StatusBar } from "expo-status-bar";
 
 interface ISignIn {
-  navigation: StackNavigationProp<RootStackParamList, "Profile">;
+  navigation: StackNavigationProp<RootStackParamList, "Signin">;
 }
 
 const SignIn: React.FC<ISignIn> = ({ navigation }) => {

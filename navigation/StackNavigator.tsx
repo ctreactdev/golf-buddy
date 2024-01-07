@@ -11,7 +11,11 @@ const StackNavigator = () => {
         component={Home}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Signin" component={SignIn} />
       <Stack.Screen name="Signup" component={SignUp} />
       <Stack.Screen name="Fillout" component={Fillout} />
